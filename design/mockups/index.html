@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Макеты — Бросить курить: дни без</title>
+  <style>
+    :root {
+      --page: #d9d3c8;
+      --bg: #f6f3ec;
+      --card: #fffcf7;
+      --ink: #1c1915;
+      --muted: #6e675e;
+      --accent: #2f6f56;
+      --accent-ink: #f6f3ec;
+      --line: #e4ddd2;
+    }
+    [data-theme="dark"] {
+      --page: #0e0d0c;
+      --bg: #141311;
+      --card: #1e1c19;
+      --ink: #f3efe6;
+      --muted: #a39b90;
+      --accent: #7dbfa3;
+      --accent-ink: #141311;
+      --line: #34302a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: "Segoe UI", sans-serif;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 24px 28px 8px;
+    }
+    h1 { font-size: 22px; font-weight: 650; margin: 0; }
+    header p { margin: 4px 0 0; color: var(--muted); }
+    button.theme {
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+    .board {
+      display: flex;
+      gap: 28px;
+      overflow-x: auto;
+      padding: 20px 28px 48px;
+      align-items: flex-start;
+    }
+    .shot { width: 320px; flex: 0 0 auto; }
+    .shot > span {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .phone {
+      background: var(--bg);
+      color: var(--ink);
+      border-radius: 28px;
+      min-height: 680px;
+      padding: 22px 18px 18px;
+      border: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .kicker { color: var(--muted); font-size: 13px; margin: 0; }
+    h2 { font-size: 26px; line-height: 1.15; margin: 0; font-weight: 650; }
+    label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+    .field {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 16px;
+    }
+    .stack { display: flex; flex-direction: column; gap: 10px; }
+    .grow { flex: 1; }
+    button.primary, button.ghost, a.link {
+      border-radius: 16px;
+      min-height: 52px;
+      font-size: 16px;
+      font-family: inherit;
+    }
+    button.primary {
+      border: 0;
+      background: var(--accent);
+      color: var(--accent-ink);
+    }
+    button.ghost {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    a.link, button.text {
+      background: none;
+      border: 0;
+      color: var(--accent);
+      min-height: 36px;
+      text-align: center;
+      font-size: 15px;
+      text-decoration: none;
+    }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .reason { margin: 0; color: var(--accent); }
+    .days {
+      font-size: 84px;
+      line-height: 0.85;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -2px;
+      margin: 0;
+    }
+    .unit { margin: 0; font-size: 18px; }
+    .sub { margin: 0; color: var(--muted); }
+    .stats, .miles { display: grid; gap: 8px; }
+    .stats { grid-template-columns: repeat(3, 1fr); }
+    .stat, .mile {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 10px;
+      border: 1px solid var(--line);
+    }
+    .stat b, .mile b { display: block; font-size: 15px; font-variant-numeric: tabular-nums; }
+    .stat span, .mile span { color: var(--muted); font-size: 12px; }
+    .miles { grid-template-columns: 1fr; }
+    .figure {
+      width: 236px;
+      height: 228px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .figure img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      transform: scale(1.14);
+      transform-origin: center 42%;
+      display: block;
+    }
+    .figure.start img { filter: grayscale(0.82) brightness(1.02) contrast(0.88); }
+    .figure.flow img { filter: none; }
+    .figure.breath img { filter: brightness(1.1) saturate(1.35) contrast(0.9); }
+    .figure.heart img { filter: sepia(0.22) saturate(0.72) brightness(1.06) contrast(0.94); }
+    [data-theme="dark"] .figure.start img { filter: invert(1) hue-rotate(180deg) grayscale(0.45) brightness(0.9) contrast(0.95); }
+    [data-theme="dark"] .figure.flow img { filter: invert(1) hue-rotate(180deg) brightness(0.9); }
+    [data-theme="dark"] .figure.breath img { filter: invert(1) hue-rotate(180deg) brightness(1.02) saturate(1.25); }
+    [data-theme="dark"] .figure.heart img { filter: invert(1) hue-rotate(180deg) sepia(0.16) saturate(0.8) brightness(0.96); }
+    .states { display: flex; flex-wrap: wrap; gap: 6px; }
+    .states button {
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+    .states button.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+    .list { display: flex; flex-direction: column; gap: 8px; }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+    .now { color: var(--accent); }
+    .circle {
+      width: 140px;
+      height: 140px;
+      margin: 8px auto;
+      border-radius: 50%;
+      border: 10px solid var(--accent);
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+    .timer { font-size: 56px; text-align: center; margin: 0; font-variant-numeric: tabular-nums; }
+    .widget {
+      width: 220px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 16px;
+    }
+    .widget strong { font-size: 28px; display: block; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Макеты первой версии</h1>
+      <p>Светлая и тёмная тема. Рекламный слот скрыт.</p>
+    </div>
+    <button class="theme" type="button" id="theme">Тёмная тема</button>
+  </header>
+  <div class="board">
+    <section class="shot" id="date">
+      <span>Онбординг. Дата</span>
+      <div class="phone">
+        <p class="kicker">Шаг 1 из 3</p>
+        <h2>Когда была последняя сигарета?</h2>
+        <div class="stack">
+          <div><label>Дата</label><div class="field">3 ноября 2026</div></div>
+          <div><label>Время</label><div class="field">21:40</div></div>
+        </div>
+        <div class="grow"></div>
+        <button class="primary">Дальше</button>
+      </div>
+    </section>
+
+    <section class="shot" id="habit">
+      <span>Онбординг. Привычка</span>
+      <div class="phone">
+        <p class="kicker">Шаг 2 из 3</p>
+        <h2>Как вы курили?</h2>
+        <div class="stack">
+          <div><label>Сигарет в день</label><div class="field">15</div></div>
+          <div><label>Сигарет в пачке</label><div class="field">20</div></div>
+          <div><label>Цена пачки, ₽</label><div class="field">150</div></div>
+          <p class="sub">Размер пачки нужен, чтобы посчитать деньги.</p>
+        </div>
+        <div class="grow"></div>
+        <button class="primary">Дальше</button>
+      </div>
+    </section>
+
+    <section class="shot" id="reason">
+      <span>Онбординг. Причина</span>
+      <div class="phone">
+        <p class="kicker">Шаг 3 из 3</p>
+        <h2>Ради чего вы бросаете?</h2>
+        <div><label>Можно пропустить</label><div class="field">Утренняя пробежка</div></div>
+        <div class="grow"></div>
+        <button class="primary">Начать</button>
+        <button class="text">Пропустить</button>
+      </div>
+    </section>
+
+    <section class="shot" id="home">
+      <span>Главный экран</span>
+      <div class="phone">
+        <div class="top"><strong>Дни без</strong><span>Настройки</span></div>
+        <p class="reason">Утренняя пробежка</p>
+        <p class="days">12</p>
+        <p class="unit">без сигарет · 4 ч 18 мин</p>
+        <p class="sub">До 1 месяца — 18 дней</p>
+        <div class="stats">
+          <div class="stat"><b>248</b><span>сигарет</span></div>
+          <div class="stat"><b>1 860,40</b><span>рублей</span></div>
+          <div class="stat"><b>20 ч</b><span>перекуров</span></div>
+        </div>
+        <div class="miles">
+          <div class="mile"><b>5 000 ₽</b><span>деньги</span></div>
+          <div class="mile"><b>1 сутки</b><span>время перекуров</span></div>
+          <div class="mile"><b>Лёгкие</b><span>здоровье</span></div>
+        </div>
+        <button class="primary">Хочу курить</button>
+        <a class="link" href="#health">Здоровье</a>
+      </div>
+    </section>
+
+    <section class="shot" id="health">
+      <span>Здоровье</span>
+      <div class="phone">
+        <div class="top"><span>Назад</span><strong>Здоровье</strong><span></span></div>
+        <div class="states" id="states">
+          <button type="button" data-state="start">Старт</button>
+          <button type="button" data-state="flow">Кровоток</button>
+          <button type="button" class="on" data-state="breath">Дыхание</button>
+          <button type="button" data-state="heart">Сердце</button>
+        </div>
+        <div class="figure breath" id="torso">
+          <img src="torso-health.jpg" alt="Торс без лица">
+        </div>
+        <p class="sub" id="caption">Дыхание. Ориентир по сроку лёгких, не снимок вашего тела.</p>
+        <div class="list">
+          <div class="row"><span>Пульс</span><span>пройдена</span></div>
+          <div class="row"><span>Кислород</span><span>пройдена</span></div>
+          <div class="row"><span>Лёгкие</span><span class="now">сейчас</span></div>
+          <div class="row"><span>Сердце</span><span>впереди</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="shot" id="craving">
+      <span>Хочу курить</span>
+      <div class="phone">
+        <div class="top"><span>Закрыть</span><span></span></div>
+        <h2>Тяга проходит</h2>
+        <p class="reason">Утренняя пробежка</p>
+        <div class="circle">Вдох<br>4 секунды</div>
+        <p class="timer">4:12</p>
+        <p class="sub" style="text-align:center">Несколько минут, и станет легче.</p>
+        <div class="grow"></div>
+        <button class="primary">Уже легче</button>
+      </div>
+    </section>
+
+    <section class="shot" id="relapse">
+      <span>Срыв</span>
+      <div class="phone">
+        <div class="top"><span>Назад</span><span></span></div>
+        <h2>Что произошло?</h2>
+        <p class="sub">История сохранится в обоих случаях.</p>
+        <div class="grow"></div>
+        <button class="ghost">Выкурил одну</button>
+        <button class="ghost">Начать заново</button>
+      </div>
+    </section>
+
+    <section class="shot" id="settings">
+      <span>Настройки</span>
+      <div class="phone">
+        <div class="top"><span>Назад</span><strong>Настройки</strong><span></span></div>
+        <div class="list">
+          <div class="row"><span>Последняя сигарета</span><b>3 ноя, 21:40</b></div>
+          <div class="row"><span>Сигарет в день</span><b>15</b></div>
+          <div class="row"><span>В пачке</span><b>20</b></div>
+          <div class="row"><span>Цена пачки</span><b>150 ₽</b></div>
+          <div class="row"><span>Причина</span><b>Пробежка</b></div>
+          <div class="row"><span>Тема</span><b>Системная</b></div>
+          <div class="row"><span>Напоминание</span><b>Выкл</b></div>
+        </div>
+        <div class="grow"></div>
+        <button class="ghost">Экспорт</button>
+        <button class="ghost">Импорт</button>
+      </div>
+    </section>
+
+    <section class="shot" id="about">
+      <span>О приложении</span>
+      <div class="phone">
+        <div class="top"><span>Назад</span><strong>О приложении</strong><span></span></div>
+        <h2>Бросить курить: дни без</h2>
+        <p>Данные хранятся только на этом телефоне.</p>
+        <p class="sub">Вехи здоровья — усреднённые ориентиры. Это не диагноз и не изображение вашего тела.</p>
+        <p class="sub">Адрес поддержки указывается перед выпуском.</p>
+      </div>
+    </section>
+
+    <section class="shot" id="widget">
+      <span>Виджет</span>
+      <div class="phone" style="min-height:240px;justify-content:center">
+        <div class="widget">
+          <span class="kicker">Дни без</span>
+          <strong>12 дней</strong>
+          <span>1 860,40 ₽</span>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+    const root = document.documentElement;
+    const themeButton = document.getElementById("theme");
+    themeButton.addEventListener("click", () => {
+      const dark = root.getAttribute("data-theme") === "dark";
+      root.setAttribute("data-theme", dark ? "light" : "dark");
+      themeButton.textContent = dark ? "Тёмная тема" : "Светлая тема";
+    });
+
+    const captions = {
+      start: "Старт. До первых вех. Это не снимок вашего тела.",
+      flow: "Кровоток. Ориентир по пульсу и кислороду.",
+      breath: "Дыхание. Ориентир по сроку лёгких, не снимок вашего тела.",
+      heart: "Сердце. Ориентир по сердечному риску."
+    };
+    const torso = document.getElementById("torso");
+    const caption = document.getElementById("caption");
+    document.getElementById("states").addEventListener("click", (event) => {
+      const button = event.target.closest("button");
+      if (!button) return;
+      torso.setAttribute("class", "figure " + button.dataset.state);
+      caption.textContent = captions[button.dataset.state];
+      document.querySelectorAll("#states button").forEach((item) => item.classList.remove("on"));
+      button.classList.add("on");
+    });
+  </script>
+</body>
+</html>
